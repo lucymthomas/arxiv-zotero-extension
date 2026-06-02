@@ -1,0 +1,24 @@
+{
+  "manifest_version": 3,
+  "name": "arXiv → Zotero",
+  "version": "1.0",
+  "description": "One-click: add any arXiv paper to Zotero with an AI-generated summary note.",
+  "permissions": ["storage", "activeTab"],
+  "host_permissions": [
+    "https://arxiv.org/*",
+    "https://ar5iv.labs.arxiv.org/*",
+    "https://api.anthropic.com/*",
+    "https://api.zotero.org/*"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "icons": {
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  }
+}

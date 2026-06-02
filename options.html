@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>arXiv → Zotero Settings</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      max-width: 480px;
+      margin: 48px auto;
+      padding: 0 24px;
+      color: #1a1a1a;
+    }
+    h1 { font-size: 1.2rem; margin-bottom: 4px; }
+    h1 span { color: #b31b1b; }
+    .subtitle { color: #888; font-size: 0.85rem; margin-bottom: 32px; }
+
+    label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 6px; }
+    .hint  { font-size: 0.78rem; color: #888; margin-bottom: 10px; }
+    .hint a { color: #b31b1b; }
+
+    input[type=password], input[type=text] {
+      width: 100%;
+      padding: 9px 12px;
+      border: 1px solid #ddd;
+      border-radius: 7px;
+      font-size: 0.9rem;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    input:focus { border-color: #b31b1b; }
+
+    .row { display: flex; align-items: center; gap: 8px; margin-top: 6px; }
+    .show-toggle { font-size: 0.78rem; color: #888; cursor: pointer; white-space: nowrap; }
+    .show-toggle:hover { color: #555; }
+
+    .section { margin-bottom: 28px; }
+
+    button {
+      background: #b31b1b;
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 7px;
+      font-size: 0.9rem;
+      cursor: pointer;
+      margin-top: 8px;
+    }
+    button:hover { background: #8f1515; }
+
+    #saved-msg {
+      display: none;
+      color: #16a34a;
+      font-size: 0.85rem;
+      margin-top: 10px;
+    }
+
+    .info-box {
+      background: #fafafa;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      padding: 14px 16px;
+      font-size: 0.82rem;
+      line-height: 1.6;
+      color: #555;
+      margin-top: 32px;
+    }
+    .info-box strong { color: #1a1a1a; }
+  </style>
+</head>
+<body>
+  <h1><span>arXiv</span> → Zotero</h1>
+  <p class="subtitle">Extension Settings</p>
+
+  <div class="section">
+    <label for="api-key">Anthropic API Key</label>
+    <p class="hint">
+      Get one at <a href="https://console.anthropic.com/settings/api-keys" target="_blank">console.anthropic.com</a>.
+      Your key is stored locally in your browser and never sent anywhere except Anthropic's API.
+    </p>
+    <div class="row">
+      <input type="password" id="api-key" placeholder="sk-ant-..." autocomplete="off">
+      <span class="show-toggle" id="toggle-show">Show</span>
+    </div>
+  </div>
+
+  <button id="save-btn">Save</button>
+  <div id="saved-msg">✓ Saved!</div>
+
+  <div class="info-box">
+    <strong>Zotero credentials</strong> (pre-configured for your library)<br>
+    User ID: 7023922 · API Key: stored in extension
+  </div>
+
+  <script src="options.js"></script>
+</body>
+</html>
