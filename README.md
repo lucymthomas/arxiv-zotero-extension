@@ -1,47 +1,66 @@
-# arXiv → Zotero
+# Paper → Zotero
 
-A browser extension for Arc (and any Chromium-based browser) that adds arXiv papers to your Zotero library with an AI-generated summary note — in one click.
+A browser extension for Arc (and any Chromium-based browser) that attaches an AI-generated summary note to any paper you save in Zotero — in one click.
 
 ## What it does
 
-This extension works *alongside* the [Zotero Connector](https://www.zotero.org/download/connectors) — it doesn't replace it. The Connector handles saving papers to your library (it does this better than any custom code could, with site-specific translators for hundreds of journals). This extension's job is purely to generate an AI summary and attach it as a note.
+This extension works *alongside* the [Zotero Connector](https://www.zotero.org/download/connectors) — it doesn't replace it. The Connector handles saving papers to your library (with site-specific translators for hundreds of journals). This extension's sole job is to read the paper, generate a structured summary using Claude, and attach it as a note to the Zotero entry.
 
 **Workflow:**
 1. Navigate to any paper page (arXiv, APS, Nature, Springer, etc.)
 2. Save to Zotero using the Zotero Connector as normal
 3. Click this extension's toolbar button
-4. The popup shows the current page and the most recently saved Zotero item — confirm they match
-5. Click **Generate & Attach Summary** — Claude reads the page and writes a structured note directly into Zotero
+4. Confirm the detected paper matches your most recently saved Zotero item
+5. Click **Generate & Attach Summary**
 6. Optionally open a formatted summary tab
 
-## Setup
+## Prerequisites
 
-### 1. Install the extension
+You need three things installed/set up before using this extension.
 
-- Download or clone this repo
-- Open `arc://extensions` (or `chrome://extensions`) and enable **Developer Mode**
-- Click **Load unpacked** and select the repo folder
+### 1. Zotero + Zotero Connector
 
-### 2. Get your credentials
+**Zotero** is a free, open-source reference manager. Download it at [zotero.org/download](https://www.zotero.org/download). You must have the desktop app running for the Connector to save papers.
 
-You'll need three things — all entered in the extension's settings panel (click ⚙️):
+**Zotero Connector** is the browser extension that saves papers to your Zotero library with a single click. Install it for Arc/Chrome at [zotero.org/download/connectors](https://www.zotero.org/download/connectors). Both are completely free.
 
-**Anthropic API key**
-- Go to [platform.claude.com](https://platform.claude.com), log in, and find API Keys in the sidebar
-- The extension uses `claude-haiku` — very cheap (fractions of a cent per paper)
+### 2. Anthropic API access
 
-**Zotero User ID + API Key**
-- Go to [zotero.org/settings/keys](https://www.zotero.org/settings/keys)
-- Your User ID is the number shown under your username
-- Create a new API key with read/write access to your library
+This extension uses [Claude](https://www.anthropic.com/claude) (specifically the `claude-haiku` model) to generate summaries. This requires an Anthropic API key.
 
-### 3. Enter credentials
+**To get an API key:**
+1. Go to [platform.claude.com](https://platform.claude.com) and create an account
+2. Once logged in, find **API Keys** in the left sidebar and create a new key
+3. You'll need to add a small amount of credit to use the API — go to **Billing** and add funds (a few dollars goes a very long way at Haiku pricing)
 
-Click the ⚙️ icon in the extension popup, fill in all three fields, and hit Save.
+**Cost:** Haiku is Anthropic's fastest and cheapest model. Summarising a paper costs a fraction of a cent — $5 of credit would cover thousands of summaries.
+
+> Your API key is stored locally in your browser and is only ever sent to Anthropic's API. It is never stored on any external server.
+
+### 3. Zotero API key
+
+To attach notes to your Zotero library programmatically, you need a Zotero API key.
+
+**To get one:**
+1. Log in at [zotero.org](https://www.zotero.org) and go to [zotero.org/settings/keys](https://www.zotero.org/settings/keys)
+2. Note your **User ID** — the number shown beneath your username on that page
+3. Click **Create new private key**, give it a name (e.g. "Paper summary extension"), and enable **Allow library access** with read/write permissions
+4. Copy the key — you won't be able to see it again after leaving the page
+
+> Your Zotero credentials are stored locally in your browser and are only ever sent to the Zotero API.
+
+## Installation
+
+1. Download or clone this repository
+2. Open `arc://extensions` (or `chrome://extensions`) and enable **Developer Mode** (toggle in the top right)
+3. Click **Load unpacked** and select the repository folder
+4. Click the ⚙️ icon in the extension popup and enter your three credentials (Anthropic API key, Zotero User ID, Zotero API key), then hit **Save**
 
 ## Usage
 
-Navigate to any arXiv paper (e.g. `https://arxiv.org/abs/2301.07041`) and click the extension icon. The popup shows the paper title and a progress indicator as it works through fetching, summarising, and adding to Zotero.
+Navigate to any paper page and save it to Zotero with the Zotero Connector first. Then click the **Paper → Zotero** toolbar button. The popup will show the current page title and confirm it matches the most recently saved Zotero item. Click **Generate & Attach Summary** to proceed.
+
+Works with arXiv (both abstract and PDF URLs), APS journals, Nature, Springer, and any journal that embeds standard `citation_*` metadata tags in its pages.
 
 ## Summary format
 
@@ -52,7 +71,6 @@ Each paper gets a Zotero note structured as:
 - **Key results** — bullet list of main findings
 - **Notable finding** — the most interesting result
 
-## Notes
+## Privacy
 
-- All credentials are stored locally in your browser via `chrome.storage.sync` and never sent anywhere except the respective APIs (Anthropic and Zotero)
-- Works with both new-style arXiv IDs (`2301.07041`) and old-style (`gr-qc/0003032`)
+All credentials (Anthropic API key, Zotero User ID, Zotero API key) are stored locally in your browser using `chrome.storage.sync`. They are only ever transmitted to their respective APIs (Anthropic and Zotero) and are never sent to any other server.
