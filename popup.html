@@ -26,11 +26,9 @@
     header button.icon-btn:hover { color: #555; }
 
     #main { padding: 16px; }
-
     .hidden { display: none !important; }
 
-    /* ── Settings panel ── */
-    #state-settings {}
+    /* ── Settings ── */
     #state-settings h2 { font-size: 0.95rem; font-weight: 600; margin-bottom: 14px; }
     #state-settings label { display: block; font-size: 0.82rem; font-weight: 600; margin-bottom: 5px; }
     #state-settings .hint { font-size: 0.76rem; color: #888; margin-bottom: 8px; line-height: 1.5; }
@@ -46,18 +44,29 @@
     .save-row { display: flex; align-items: center; gap: 10px; margin-top: 12px; }
     .save-row button { background: #b31b1b; color: #fff; border: none; padding: 8px 16px; border-radius: 6px; font-size: 0.85rem; cursor: pointer; }
     .save-row button:hover { background: #8f1515; }
-    #saved-msg { font-size: 0.82rem; color: #16a34a; }
 
-    /* ── Not-on-arxiv ── */
-    #state-not-arxiv { text-align: center; padding: 24px 0; color: #888; font-size: 0.88rem; line-height: 1.6; }
+    /* ── Idle (no paper) ── */
+    #state-idle { padding: 20px 0; }
+    #state-idle p { font-size: 0.85rem; color: #666; line-height: 1.6; }
+    #state-idle .tip { margin-top: 10px; font-size: 0.78rem; color: #aaa; }
 
     /* ── Ready ── */
-    .paper-title { font-size: 0.88rem; font-weight: 600; line-height: 1.4; margin-bottom: 4px; }
-    .paper-meta  { font-size: 0.78rem; color: #888; margin-bottom: 16px; }
+    .section-label { font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #aaa; margin-bottom: 5px; }
+    .paper-title { font-size: 0.85rem; font-weight: 600; line-height: 1.4; }
+    .paper-meta  { font-size: 0.76rem; color: #888; margin-top: 2px; }
+    .divider { border: none; border-top: 1px solid #f0f0f0; margin: 12px 0; }
+    .zotero-title { font-size: 0.85rem; font-weight: 500; line-height: 1.4; color: #333; }
+    .zotero-meta  { font-size: 0.76rem; color: #888; margin-top: 2px; }
+    .mismatch-warn {
+      margin-top: 8px; font-size: 0.76rem; color: #d97706;
+      background: #fffbeb; border: 1px solid #fde68a;
+      border-radius: 5px; padding: 6px 8px; line-height: 1.4;
+    }
+
     button#add-btn {
       width: 100%; background: #b31b1b; color: #fff; border: none;
-      padding: 10px; border-radius: 8px; font-size: 0.92rem;
-      font-weight: 500; cursor: pointer; transition: background 0.15s;
+      padding: 10px; border-radius: 8px; font-size: 0.88rem;
+      font-weight: 500; cursor: pointer; margin-top: 14px;
     }
     button#add-btn:hover:not(:disabled) { background: #8f1515; }
     button#add-btn:disabled { background: #ccc; cursor: default; }
@@ -73,11 +82,17 @@
     #state-success { text-align: center; padding: 20px 0; }
     #state-success .checkmark { font-size: 2.5rem; }
     #state-success p { font-size: 0.85rem; color: #555; margin-top: 8px; }
+    #view-summary-btn {
+      margin-top: 14px; width: 100%; background: #f5f5f5; color: #1a1a1a;
+      border: 1px solid #e0e0e0; padding: 9px; border-radius: 8px;
+      font-size: 0.88rem; cursor: pointer;
+    }
+    #view-summary-btn:hover { background: #eee; }
   </style>
 </head>
 <body>
   <header>
-    <div class="brand"><span>arXiv</span> → Zotero</div>
+    <div class="brand">Paper <span>→</span> Zotero</div>
     <button class="icon-btn" id="settings-toggle" title="Settings">⚙️</button>
   </header>
 
@@ -88,17 +103,14 @@
       <h2>Settings</h2>
 
       <label for="api-key-input">Anthropic API Key</label>
-      <p class="hint">
-        Get one at <a href="https://platform.claude.com" target="_blank">platform.claude.com</a>
-        → log in → API Keys in the sidebar.
-      </p>
+      <p class="hint">Get one at <a href="https://platform.claude.com" target="_blank">platform.claude.com</a> → log in → API Keys.</p>
       <div class="input-row">
         <input type="password" id="api-key-input" placeholder="sk-ant-..." autocomplete="off">
         <span class="show-toggle" id="toggle-show">Show</span>
       </div>
 
       <label for="zotero-user-id-input" style="margin-top:14px;">Zotero User ID</label>
-      <p class="hint">Find it at <a href="https://www.zotero.org/settings/keys" target="_blank">zotero.org/settings/keys</a> — the number shown under your username.</p>
+      <p class="hint">Find at <a href="https://www.zotero.org/settings/keys" target="_blank">zotero.org/settings/keys</a> — the number under your username.</p>
       <div class="input-row">
         <input type="text" id="zotero-user-id-input" placeholder="1234567" autocomplete="off">
       </div>
@@ -112,29 +124,43 @@
 
       <div class="save-row">
         <button id="save-btn">Save</button>
-        <span id="saved-msg" class="hidden">✓ Saved!</span>
+        <span id="saved-msg" class="hidden" style="font-size:0.82rem;color:#16a34a;">✓ Saved!</span>
       </div>
     </div>
 
-    <!-- Not on arxiv -->
-    <div id="state-not-arxiv" class="hidden">
-      Navigate to an arXiv paper page to use this extension.
+    <!-- Idle / no paper detected -->
+    <div id="state-idle" class="hidden">
+      <p>Navigate to a paper page, save it to Zotero using the Zotero Connector, then click this button to attach an AI summary note.</p>
+      <p class="tip">No paper metadata detected on this page.</p>
     </div>
 
     <!-- Ready -->
     <div id="state-ready" class="hidden">
-      <div class="paper-title" id="paper-title"></div>
-      <div class="paper-meta" id="paper-meta"></div>
-      <button id="add-btn">Add to Zotero with Summary</button>
+      <div class="section-label">Current page</div>
+      <div class="paper-title" id="paper-title">Loading…</div>
+      <div class="paper-meta"  id="paper-meta"></div>
+
+      <hr class="divider">
+
+      <div id="zotero-match-section">
+        <div class="section-label">Most recent Zotero item</div>
+        <div class="zotero-title" id="zotero-title">Loading…</div>
+        <div class="zotero-meta"  id="zotero-meta"></div>
+      </div>
+      <div class="mismatch-warn hidden" id="mismatch-warn">
+        ⚠️ This paper hasn't been saved to Zotero yet. Use the Zotero Connector to save it first, then try again.
+      </div>
+
+      <button id="add-btn">Generate &amp; Attach Summary</button>
       <div id="progress">
-        <div class="step" id="step-fetch">
-          <span class="step-icon">○</span> Fetching paper metadata
+        <div class="step" id="step-read">
+          <span class="step-icon">○</span> Reading page content
         </div>
         <div class="step" id="step-summarise">
           <span class="step-icon">○</span> Generating summary with Claude
         </div>
         <div class="step" id="step-zotero">
-          <span class="step-icon">○</span> Adding to Zotero
+          <span class="step-icon">○</span> Attaching note in Zotero
         </div>
       </div>
     </div>
@@ -142,12 +168,11 @@
     <!-- Success -->
     <div id="state-success" class="hidden">
       <div class="checkmark">✅</div>
-      <p>Paper added to Zotero with summary note!</p>
-      <button id="view-summary-btn" style="margin-top:14px;width:100%;background:#f5f5f5;color:#1a1a1a;border:1px solid #e0e0e0;padding:9px;border-radius:8px;font-size:0.88rem;cursor:pointer;">View Summary</button>
+      <p>Summary note attached to Zotero!</p>
+      <button id="view-summary-btn">View Summary</button>
     </div>
 
   </div>
-
   <script src="popup.js"></script>
 </body>
 </html>

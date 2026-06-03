@@ -11,9 +11,12 @@ chrome.storage.local.get("lastSummary", ({ lastSummary }) => {
     .map(a => `${a.firstName} ${a.lastName}`.trim())
     .join(", ") + (lastSummary.authors?.length > 5 ? " et al." : "");
 
-  const arxivUrl = `https://arxiv.org/abs/${lastSummary.arxivId}`;
+  const pubLabel = lastSummary.arxivId
+    ? `arXiv:${lastSummary.arxivId}`
+    : lastSummary.journal || "";
+  const linkUrl = lastSummary.url || (lastSummary.arxivId ? `https://arxiv.org/abs/${lastSummary.arxivId}` : "#");
   document.getElementById("meta").innerHTML =
-    `${authorStr ? authorStr + " · " : ""}${lastSummary.date || ""} · <a href="${arxivUrl}" target="_blank">arXiv:${lastSummary.arxivId}</a>`;
+    `${authorStr ? authorStr + " · " : ""}${lastSummary.date || ""}${pubLabel ? ' · <a href="' + linkUrl + '" target="_blank">' + pubLabel + "</a>" : ""}`;
 
   document.getElementById("summary").innerHTML = lastSummary.summaryHtml;
 });

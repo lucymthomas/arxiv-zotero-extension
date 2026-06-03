@@ -4,10 +4,15 @@ A browser extension for Arc (and any Chromium-based browser) that adds arXiv pap
 
 ## What it does
 
-1. You navigate to any arXiv paper page
-2. Click the toolbar button
-3. The extension fetches the paper metadata, generates a structured summary using Claude, and adds the paper + note to your Zotero library
-4. Optionally opens a formatted summary tab
+This extension works *alongside* the [Zotero Connector](https://www.zotero.org/download/connectors) — it doesn't replace it. The Connector handles saving papers to your library (it does this better than any custom code could, with site-specific translators for hundreds of journals). This extension's job is purely to generate an AI summary and attach it as a note.
+
+**Workflow:**
+1. Navigate to any paper page (arXiv, APS, Nature, Springer, etc.)
+2. Save to Zotero using the Zotero Connector as normal
+3. Click this extension's toolbar button
+4. The popup shows the current page and the most recently saved Zotero item — confirm they match
+5. Click **Generate & Attach Summary** — Claude reads the page and writes a structured note directly into Zotero
+6. Optionally open a formatted summary tab
 
 ## Setup
 
